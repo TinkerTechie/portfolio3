@@ -3,8 +3,8 @@ document.addEventListener("DOMContentLoaded", () => {
   // Render Featured Projects
   const featuredGrid = document.getElementById("featuredGrid");
   if (featuredGrid && typeof featuredProjects !== 'undefined') {
-    featuredGrid.innerHTML = featuredProjects.map(proj => `
-      <div class="card">
+    featuredGrid.innerHTML = featuredProjects.map((proj, i) => `
+      <div class="card" ${proj.architecture || proj.metrics ? `style="cursor:pointer;" onclick="openProjectModal(${i})"` : ''}>
         <div class="card-top">
           <h3>${proj.title}</h3>
           <span class="tag-ctx">${proj.tag}</span>
@@ -14,15 +14,93 @@ document.addEventListener("DOMContentLoaded", () => {
           ${proj.stack.map(s => `<span>${s}</span>`).join("")}
         </div>
         <div class="card-links">
-          <a class="${proj.disabled ? 'disabled' : ''}" href="${proj.demoLink}" ${proj.disabled ? '' : 'target="_blank" rel="noopener"'}>
+          <a class="${proj.disabled ? 'disabled' : ''}" href="${proj.demoLink}" ${proj.disabled ? '' : 'target="_blank" rel="noopener"'} onclick="event.stopPropagation()">
             ${proj.demoText}
           </a>
-          <a href="${proj.codeLink}" target="_blank" rel="noopener">
+          <a href="${proj.codeLink}" target="_blank" rel="noopener" onclick="event.stopPropagation()">
             ${proj.codeText}
           </a>
         </div>
       </div>
     `).join("");
+  }
+  
+  // Project Modal Logic
+  window.openProjectModal = (index) => {
+    const proj = featuredProjects[index];
+    if (!proj) return;
+    
+    const modalWrap = document.getElementById('project-modal-wrap');
+    const modalContent = document.getElementById('modal-content');
+    
+    let archHtml = '';
+    if (proj.architecture && proj.architecture.length > 0) {
+      archHtml = `
+        <div>
+          <h4 style="margin-top:0; margin-bottom:16px;">Architecture</h4>
+          <div class="arch-diagram">
+            ${proj.architecture.map((stage, i) => `
+              <div class="arch-stage">${stage}</div>
+              ${i < proj.architecture.length - 1 ? '<div class="arch-edge"></div>' : ''}
+            `).join('')}
+          </div>
+        </div>
+      `;
+    }
+    
+    let metricsHtml = '';
+    if (proj.metrics && proj.metrics.length > 0) {
+      metricsHtml = `
+        <div class="modal-metrics">
+          ${proj.metrics.map(m => `
+            <div class="modal-metric">
+              <h5>${m.label}</h5>
+              <p>${m.value}</p>
+            </div>
+          `).join('')}
+        </div>
+      `;
+    }
+    
+    modalContent.innerHTML = `
+      <div class="modal-header">
+        <div class="modal-meta">
+          <span class="tag-ctx">${proj.tag}</span>
+          <div class="stack-tags" style="margin:0;">
+            ${proj.stack.map(s => `<span>${s}</span>`).join("")}
+          </div>
+        </div>
+        <h3>${proj.title}</h3>
+        <p style="color:var(--muted); margin:0;">${proj.description}</p>
+      </div>
+      
+      <div class="modal-body">
+        <div>
+          <div style="display:flex; gap:16px; margin-bottom: 24px;">
+            <a class="btn btn-primary" style="padding: 8px 16px; font-size:12px;" href="${proj.demoLink}" ${proj.disabled ? '' : 'target="_blank" rel="noopener"'}>${proj.demoText}</a>
+            <a class="btn btn-ghost" style="padding: 8px 16px; font-size:12px;" href="${proj.codeLink}" target="_blank" rel="noopener">${proj.codeText}</a>
+          </div>
+          ${metricsHtml}
+        </div>
+        ${archHtml}
+      </div>
+    `;
+    
+    modalWrap.classList.add('open');
+  };
+  
+  const modalWrap = document.getElementById('project-modal-wrap');
+  const modalClose = document.getElementById('modal-close');
+  if (modalWrap && modalClose) {
+    modalClose.addEventListener('click', () => modalWrap.classList.remove('open'));
+    modalWrap.addEventListener('click', (e) => {
+      if (e.target === modalWrap) modalWrap.classList.remove('open');
+    });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && modalWrap.classList.contains('open')) {
+        modalWrap.classList.remove('open');
+      }
+    });
   }
 
   // Render Log Projects

@@ -1,6 +1,6 @@
 const photoCertificates = [
   {
-    link: "assets/certs/hackerrank-code-autopsy.jpg",
+    link: "https://drive.google.com/file/d/1V2kAI1moTiFcC30JCRQNV7VFSRvt-wfk/view",
     imgSrc: "assets/certs/hackerrank-code-autopsy.jpg",
     alt: "HackerRank Code Autopsy certificate of participation",
     title: "HackerRank — Code Autopsy",

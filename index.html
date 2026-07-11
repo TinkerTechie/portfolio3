@@ -320,10 +320,90 @@
   @media (prefers-reduced-motion: reduce){
     *{animation:none !important; transition:none !important;}
   }
+
+  /* ---------- NETWORK BG ---------- */
+  #network-bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none; }
+  
+  /* ---------- COMMAND PALETTE ---------- */
+  .command-palette {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1000;
+    background: rgba(10, 13, 19, 0.6); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+    display: flex; align-items: flex-start; justify-content: center; padding-top: 15vh;
+    opacity: 0; pointer-events: none; transition: opacity 0.2s ease;
+  }
+  .command-palette.open { opacity: 1; pointer-events: auto; }
+  .palette-inner {
+    background: var(--panel); border: 1px solid var(--line-strong); border-radius: 12px;
+    width: 100%; max-width: 600px; box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+    overflow: hidden; display: flex; flex-direction: column;
+  }
+  .palette-input-wrap { padding: 16px 20px; border-bottom: 1px solid var(--line); display: flex; align-items: center; gap: 12px; }
+  .palette-input-wrap svg { color: var(--muted); }
+  .palette-input-wrap input {
+    flex: 1; background: transparent; border: none; color: var(--paper); font-size: 16px; font-family: 'Inter', sans-serif;
+  }
+  .palette-input-wrap input:focus { outline: none; }
+  .palette-results { max-height: 340px; overflow-y: auto; padding: 8px; }
+  .palette-item {
+    padding: 12px 16px; border-radius: 6px; cursor: pointer; display: flex; justify-content: space-between; align-items: center;
+    color: var(--muted); font-size: 14px; transition: all 0.1s;
+  }
+  .palette-item.active { background: var(--panel-2); color: var(--paper); }
+  .palette-empty { padding: 24px; text-align: center; color: var(--muted); font-size: 14px; }
+  .palette-ext { font-family: 'IBM Plex Mono'; font-size: 11px; }
+
+  /* ---------- PROJECT MODAL ---------- */
+  .project-modal-wrap {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 999;
+    background: rgba(10, 13, 19, 0.6); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+    display: flex; align-items: center; justify-content: center; padding: 20px;
+    opacity: 0; pointer-events: none; transition: opacity 0.25s ease;
+  }
+  .project-modal-wrap.open { opacity: 1; pointer-events: auto; }
+  .project-modal {
+    background: var(--panel); border: 1px solid var(--line-strong); border-radius: 16px;
+    width: 100%; max-width: 800px; max-height: 90vh; overflow-y: auto; padding: 40px; position: relative;
+    transform: translateY(20px); transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .project-modal-wrap.open .project-modal { transform: translateY(0); }
+  .modal-close {
+    position: absolute; top: 20px; right: 20px; background: var(--panel-2); border: 1px solid var(--line);
+    color: var(--muted); width: 32px; height: 32px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center;
+  }
+  .modal-close:hover { color: var(--paper); border-color: var(--line-strong); }
+  .modal-header { margin-bottom: 24px; }
+  .modal-header h3 { font-size: 24px; margin: 0 0 8px; }
+  .modal-meta { display: flex; gap: 12px; align-items: center; margin-bottom: 16px; }
+  .modal-meta .tag-ctx { font-size: 12px; }
+  .modal-body { display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 40px; }
+  .modal-metrics { display: flex; gap: 20px; margin-top: 24px; padding-top: 24px; border-top: 1px solid var(--line); flex-wrap: wrap; }
+  .modal-metric { flex: 1; min-width: 120px; }
+  .modal-metric h5 { font-family: 'IBM Plex Mono'; font-size: 11px; color: var(--muted); margin: 0 0 4px; text-transform: uppercase; }
+  .modal-metric p { font-size: 20px; font-weight: 600; font-family: 'Space Grotesk'; color: var(--signal); margin: 0; }
+  .arch-diagram {
+    background: var(--void); border: 1px solid var(--line); border-radius: 12px; padding: 24px;
+    display: flex; flex-direction: column; align-items: center; gap: 12px; height: fit-content;
+  }
+  .arch-stage {
+    background: var(--panel); border: 1px solid var(--line-strong); border-radius: 8px; padding: 10px 16px;
+    font-family: 'IBM Plex Mono'; font-size: 12px; color: var(--paper); text-align: center; z-index: 2; position: relative;
+    min-width: 140px;
+  }
+  .arch-edge {
+    width: 2px; height: 24px; background: var(--line-strong); position: relative;
+  }
+  .arch-edge::after {
+    content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    background: var(--signal); transform-origin: top; transform: scaleY(0);
+    animation: flowDown 2s infinite ease-in-out;
+  }
+  @keyframes flowDown { 0% { transform: scaleY(0); transform-origin: top; } 50% { transform: scaleY(1); transform-origin: top; } 50.1% { transform: scaleY(1); transform-origin: bottom; } 100% { transform: scaleY(0); transform-origin: bottom; } }
+  @media (max-width: 768px) { .modal-body { grid-template-columns: 1fr; gap: 24px; } }
 </style>
 </head>
 <body>
 
+  <canvas id="network-bg"></canvas>
   <div id="progressBar"></div>
 <header class="nav">
   <div class="nav-inner">
@@ -362,12 +442,15 @@
     <div class="wrap hero-grid">
       <div>
         <div class="eyebrow"><span class="dot"></span> STATUS: BUILDING · OPEN TO INTERNSHIPS</div>
-        <h1>I build the <span class="accent">agents</span><br>behind the apps.</h1>
+        <div id="bootSequence" style="font-family: 'IBM Plex Mono', monospace; font-size: 14px; margin: 18px 0 22px; min-height: 120px;">
+          <!-- Boot sequence lines will go here -->
+        </div>
+        <h1 id="heroH1" style="display:none;">I build the <span class="accent">agents</span><br>behind the apps.</h1>
         <div class="typewrap"><span id="typeTarget"></span><span class="cursor"></span></div>
         <p class="lead">3rd-year B.Tech (Data Science / GenAI) at Newton School of Technology, Rishihood University. I design multi-agent RAG systems, then wire them into real, deployed products with full-stack backends and interfaces people actually use.</p>
         <div class="cta-row">
           <a class="btn btn-primary" href="#work">See the work ↓</a>
-          <a class="btn btn-ghost" href="https://drive.google.com/file/d/1V2kAI1moTiFcC30JCRQNV7VFSRvt-wfk/view?usp=sharing" target="_blank" rel="noopener">Resume ↗</a>
+          <a class="btn btn-ghost" href="https://drive.google.com/drive/folders/15Vej2eGoooTqlj2gC1OQzXm8FkCFk2CR?usp=drive_link" target="_blank" rel="noopener">Resume ↗</a>
           <a class="btn btn-ghost" href="https://github.com/TinkerTechie" target="_blank" rel="noopener">GitHub ↗</a>
         </div>
       </div>
@@ -616,25 +699,86 @@
 </footer>
 
 <script>
-  // typewriter
+  // boot sequence + typewriter
+  const bootLines = [
+    "APARNA OS v4.2",
+    "Loading kernel modules..........DONE",
+    "Mounting file systems...........DONE",
+    "Initializing neural pathways....DONE",
+    "Starting agent orchestration....DONE",
+    "Welcome back."
+  ];
+  const bootContainer = document.getElementById('bootSequence');
+  const heroH1 = document.getElementById('heroH1');
+  const typeTarget = document.getElementById('typeTarget');
   const roles = ["Building multi-agent RAG systems", "Shipping full-stack products", "Architecting LangGraph pipelines", "Open to GenAI internships"];
-  const target = document.getElementById('typeTarget');
+  
+  let bootIndex = 0;
   let ri = 0, ci = 0, deleting = false;
+  let typeTimer, bootTimer;
+  let hasSkipped = false;
+  
+  const skipBoot = () => {
+    if(hasSkipped) return;
+    hasSkipped = true;
+    bootContainer.style.display = 'none';
+    heroH1.style.display = 'block';
+    if(typeTimer) clearTimeout(typeTimer);
+    if(bootTimer) clearTimeout(bootTimer);
+    document.removeEventListener('keydown', skipBoot);
+    document.removeEventListener('click', skipBoot);
+    typeTarget.textContent = "";
+    ri = 0; ci = 0; deleting = false;
+    tick();
+  };
+  
+  const runBoot = () => {
+    if (bootIndex < bootLines.length) {
+      const line = document.createElement('div');
+      line.textContent = bootLines[bootIndex];
+      if(bootIndex === 0) line.style.color = "var(--signal)";
+      if(bootIndex === bootLines.length - 1) {
+        line.style.color = "var(--wire)"; 
+        line.style.marginTop = "8px";
+      }
+      bootContainer.appendChild(line);
+      bootIndex++;
+      bootTimer = setTimeout(runBoot, bootIndex === 1 ? 400 : 150);
+    } else {
+      bootTimer = setTimeout(() => {
+        const whoamiLine = document.createElement('div');
+        whoamiLine.innerHTML = `<span style="color:var(--signal)">$</span> whoami`;
+        bootContainer.appendChild(whoamiLine);
+        
+        bootTimer = setTimeout(() => {
+          skipBoot();
+        }, 600);
+      }, 300);
+    }
+  };
+  
+  document.addEventListener('keydown', skipBoot);
+  document.addEventListener('click', skipBoot);
+  
   function tick(){
     const full = roles[ri];
     if(!deleting){
       ci++;
-      target.textContent = full.slice(0, ci);
-      if(ci === full.length){ deleting = true; setTimeout(tick, 1400); return; }
+      typeTarget.textContent = full.slice(0, ci);
+      if(ci === full.length){ deleting = true; typeTimer = setTimeout(tick, 1400); return; }
     } else {
       ci--;
-      target.textContent = full.slice(0, ci);
+      typeTarget.textContent = full.slice(0, ci);
       if(ci === 0){ deleting = false; ri = (ri+1) % roles.length; }
     }
-    setTimeout(tick, deleting ? 28 : 45);
+    typeTimer = setTimeout(tick, deleting ? 28 : 45);
   }
-  if(!window.matchMedia('(prefers-reduced-motion: reduce)').matches){ tick(); }
-  else { target.textContent = roles[0]; }
+  
+  if(!window.matchMedia('(prefers-reduced-motion: reduce)').matches){ 
+    runBoot(); 
+  } else { 
+    skipBoot(); 
+  }
 
   // mobile menu
   const burgerBtn = document.getElementById('burgerBtn');
@@ -706,11 +850,32 @@
   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"></polyline></svg>
 </button>
 
+<div id="command-palette" class="command-palette">
+  <div class="palette-inner">
+    <div class="palette-input-wrap">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+      <input type="text" id="palette-input" placeholder="Search sections, projects, and links... (Press Esc to close)" autocomplete="off" spellcheck="false">
+    </div>
+    <div class="palette-results" id="palette-results"></div>
+  </div>
+</div>
+
+<div id="project-modal-wrap" class="project-modal-wrap">
+  <div class="project-modal">
+    <button class="modal-close" id="modal-close" aria-label="Close modal">
+      <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M4 4L14 14M14 4L4 14" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+    </button>
+    <div id="modal-content"></div>
+  </div>
+</div>
+
 <!-- Data scripts -->
 <script src="data/projects.js"></script>
 <script src="data/hackathons.js"></script>
 <script src="data/certificates.js"></script>
 <script src="js/render.js"></script>
+<script src="js/network.js"></script>
+<script src="js/palette.js"></script>
 
 </body>
 </html>
