@@ -32,8 +32,8 @@ const featuredProjects = [
     metrics: [{label: "Placeholder Metric", value: "XX%"}, {label: "Another Metric", value: "XXms"}],
     demoLink: "https://socrates-cr87.onrender.com/",
     demoText: "Live Demo ↗",
-    codeLink: "https://github.com/TinkerTechie",
-    codeText: "Browse Repos ↗"
+    codeLink: "https://github.com/TinkerTechie/Socrates",
+    codeText: "Code ↗"
   },
   {
     title: "FakeNewsDetector",
@@ -111,10 +111,10 @@ const featuredProjects = [
 ];
 
 const logProjects = [
-  { link: "https://the-three-pillars-of-ai-diffusion.vercel.app/", name: "The Three Pillars of AI Diffusion", note: "— interactive visualization of the UNCTAD Technology and Innovation Report 2024", domain: "Data Viz / Policy", text: "live ↗" },
-  { link: "https://ai-betrayal-maze.vercel.app/", name: "AI Betrayal Maze", note: "— a maze game where an AI opponent navigates using A* search", domain: "Game / Algorithms", text: "play ↗" },
-  { link: "https://github.com/TinkerTechie", name: "Crime Pattern Analysis, Indian Cities", note: "— led analysis of 40,000+ records across 29 cities; report on high-risk regions & trends", domain: "Data Analysis", text: "repo ↗" },
-  { link: "https://github.com/TinkerTechie", name: "AI Job Market Analysis", note: "— 30,000+ job records, 2 Tableau dashboards on AI's impact on salary & automation risk", domain: "Data Analysis", text: "repo ↗" },
+  { link: "https://github.com/TinkerTechie/The-Three-Pillars-of-AI-Diffusion.git", name: "The Three Pillars of AI Diffusion", note: "— interactive visualization of the UNCTAD Technology and Innovation Report 2024", domain: "Data Viz / Policy", text: "repo ↗" },
+  { link: "https://github.com/TinkerTechie/AI-Betrayal-Maze.git", name: "AI Betrayal Maze", note: "— a maze game where an AI opponent navigates using A* search", domain: "Game / Algorithms", text: "repo ↗" },
+  { link: "https://github.com/IndianCriminalAnalytics/SectionC_Group4_CrimeTrends.git", name: "Crime Pattern Analysis, Indian Cities", note: "— led analysis of 40,000+ records across 29 cities; report on high-risk regions & trends", domain: "Data Analysis", text: "repo ↗" },
+  { link: "https://github.com/Saumya-Mishra-536/SectionC_Group2_AI-Job-Market-Analysis.git", name: "AI Job Market Analysis", note: "— 30,000+ job records, 2 Tableau dashboards on AI's impact on salary & automation risk", domain: "Data Analysis", text: "repo ↗" },
   { link: "https://github.com/TinkerTechie/zomato-data_visualization", name: "Zomato Data Visualization", note: "— cleaning and visualizing a real-world restaurant dataset", domain: "Data Analysis", text: "repo ↗" },
   { link: "https://github.com/TinkerTechie/QuillBot---Notes-made-easy", name: "QuillBot — Notes Made Easy", note: "— note-taking tool", domain: "Web App", text: "repo ↗" },
   { link: "https://github.com/TinkerTechie/Cpu-Encyclopedia", name: "CPU Encyclopedia", note: "— reference web app", domain: "Web App", text: "repo ↗" },
